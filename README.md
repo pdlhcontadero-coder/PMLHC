@@ -26,6 +26,10 @@ Desde MongoDB, los datos son posteriormente consultados por la página web, dond
   <em>Ejemplo de Gráfica de Temperatura Ambiente</em>
 </p>
 
+<p align="center">
+  <img src="imagenes/politicas.jpg" width="450"><br>
+  <em>Politicas de Firewall VM Google Cloud</em>
+</p>
 
 
 ---
