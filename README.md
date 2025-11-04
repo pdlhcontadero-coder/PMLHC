@@ -16,6 +16,19 @@ En la máquina virtual, los datos son procesados mediante dos rutas principales:
 Desde MongoDB, los datos son posteriormente consultados por la página web, donde se representan en **gráficas y tablas dinámicas**, brindando una visión clara del comportamiento de las variables del sistema en el tiempo.
 
 ---
+<p align="center">
+  <img src="imagenes/pagina.jpg" width="450"><br>
+  <em>Pagina Web</em>
+</p>
+
+<p align="center">
+  <img src="imagenes/grafico.jpg" width="450"><br>
+  <em>Ejemplo de Gráfica de Temperatura Ambiente</em>
+</p>
+
+
+
+---
 
 
 ## 👥 Autores
