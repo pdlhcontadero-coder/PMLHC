@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Monitoreo de cultivos hidropónicos</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  /* =================== THEMING =================== */
+  :root{
+    /* LIGHT (default) */
+    --bg:#f6fbf9; --bg2:#eef6f3; --card:#ffffff; --soft:#f2f7f5; --text:#0e1a18; --muted:#5a7d72;
+    --accent:#0f8f5b; --accent2:#0b79bf; --bad:#c62828; --radius:18px;
+    --border:#d3e4de; --hero-bg:#eaf3ef;
+    --pill:#e6f2ed; --pill-border:#bfdcd0;
+    --btn:#e1efe9; --btn-border:#bfdcd0; --btn-secondary:#e8f3f0;
+  }
+  :root[data-theme="dark"]{
+    /* DARK (tu paleta original) */
+    --bg:#0e1a18; --bg2:#0a1412; --card:#102421; --soft:#14312d; --text:#e9fff6; --muted:#a5d7c8;
+    --accent:#2bd68f; --accent2:#4fc3f7; --bad:#ff6b6b; --radius:18px;
+    --border:#123b32; --hero-bg:#0b1715;
+    --pill:#173c35; --pill-border:#236b5d;
+    --btn:#184b43; --btn-border:#25695e; --btn-secondary:#123b32;
+  }
+
+  *{box-sizing:border-box}
+  body{margin:0;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);font-family:system-ui,Segoe UI,Roboto,Arial}
+  /* hero */
+  .hero{position:relative;height:280px;background:var(--hero-bg);border-bottom:1px solid var(--border)}
+  .hero::before{content:"";position:absolute;inset:0;background:var(--hero-img) center/cover no-repeat;filter:brightness(.9) saturate(1.05)}
+  .hero .overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(16,36,33,.85),rgba(16,36,33,.15))}
+  .hero .content{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:28px 16px}
+  .hero h1{margin:0 0 6px;font-size:40px}
+  .hero .subtitle{color:var(--muted);display:flex;gap:8px;align-items:center}
+  .wrap{max-width:1200px;margin:18px auto;padding:0 16px}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0 16px}
+  select,button{background:var(--btn);color:var(--text);border:1px solid var(--btn-border);border-radius:12px;padding:10px 14px}
+  .btn{cursor:pointer}
+  .btn.secondary{background:var(--btn-secondary)}
+  .muted{color:var(--muted);font-size:12px;margin-left:8px}
+  /* botones circulares */
+  .pillbar{display:flex;gap:14px;align-items:center;margin:8px 0 12px}
+  .circle{width:64px;height:64px;border-radius:50%;background:var(--pill);border:2px solid var(--pill-border);display:grid;place-items:center;box-shadow:0 4px 10px rgba(0,0,0,.08);cursor:pointer;transition:.15s transform ease,.15s box-shadow ease}
+  .circle:hover{transform:translateY(-2px);box-shadow:0 8px 16px rgba(0,0,0,.15)}
+  .circle img{width:36px;height:36px;border-radius:50%;object-fit:cover;filter:drop-shadow(0 1px 2px rgba(0,0,0,.2))}
+  .counter{font-size:26px;font-weight:700;color:var(--accent)}
+  .counter-label{color:var(--muted);font-size:12px;margin-top:-4px}
+  /* KPIs */
+  .kpis{display:grid;grid-template-columns:repeat(3,minmax(220px,1fr));gap:14px;margin:10px 0 18px}
+  .kpi{background:var(--soft);border-radius:14px;padding:16px 18px;border:1px solid var(--border)}
+  .kpi h3{margin:0 0 8px;font-size:14px;color:var(--muted)}
+  .kpi .val{font-size:28px;font-weight:800}
+  .kpi.bad .val{color:var(--bad)}
+  /* tarjetas y canvas */
+  .col{display:flex;flex-direction:column;gap:18px}
+  .card{background:var(--card);border-radius:var(--radius);padding:18px;border:1px solid var(--border)}
+  .card h3{margin:0 0 8px}
+  canvas{width:100%;height:300px;cursor:zoom-in}
+  details{margin-top:10px}
+  summary{cursor:pointer;color:var(--muted)}
+  .scroll{overflow:auto;border:1px solid var(--border);border-radius:12px;max-height:40vh}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{padding:6px 8px;border-bottom:1px solid var(--border)}
+  th{position:sticky;top:0;background:var(--btn-secondary);z-index:1}
+  .actions button{background:#8b2c2c;border:1px solid #b54a4a}
+  /* modal */
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:16px;z-index:999}
+  .modal.open{display:flex}
+  .modal-card{background:var(--card);border-radius:22px;max-width:1200px;width:100%;max-height:90vh;display:grid;grid-template-rows:auto auto 1fr;gap:12px;padding:18px;border:1px solid var(--border)}
+  .modal-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .modal-title{font-size:18px;font-weight:700}
+  .modal-actions{display:flex;gap:8px}
+  .big-canvas{width:100%;height:380px}
+  .badge{background:#0f2c26;border:1px solid #1f5a4e;color:#bfeee0;padding:4px 8px;border-radius:999px;font-size:12px}
+  /* Tema toggle chip */
+  .themechip{display:inline-flex;gap:6px;align-items:center;border-radius:999px;background:var(--btn-secondary);border:1px solid var(--btn-border);padding:6px 10px;font-size:12px}
+  .themechip b{font-weight:700}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero" style="--hero-img: url('{{ url_for('static', filename='img/hero.jpg') }}');">
+  <div class="overlay"></div>
+  <div class="content">
+    <h1>Monitoreo de cultivos hidropónicos</h1>
+    <div class="subtitle">
+      • <span id="clockCO" class="badge">--:--</span>
+      <span class="themechip">
+        <button id="btnTheme" class="btn" title="Cambiar tema">☀️</button>
+        <span id="themeLabel"><b>Tema:</b> Claro</span>
+      </span>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- FILA 1: RANGO POR DÍAS -->
+  <div class="row" id="rowDays">
+    <label>Rango (días):</label>
+    <select id="daysSel">
+      <option value="1">1</option>
+      <option value="3">3</option>
+      <option value="7">7</option>
+      <option value="14">14</option>
+      <option value="30">30</option>
+      <option value="all" selected>Todo</option>
+    </select>
+    <button id="btnApplyDays" class="btn secondary">Aplicar</button>
+  </div>
+
+  <!-- FILA 2: RANGO DEL CONTADOR -->
+  <div class="row" id="rowCounter">
+    <label>Rango del contador #</label>
+    <select id="counterSel">
+      <option value="">—</option>
+    </select>
+    <button id="btnUseCounter" class="btn secondary">Aplicar</button>
+  </div>
+
+  <!-- ACCIONES -->
+  <div class="row">
+    <button id="btnUpdate" class="btn">Actualizar</button>
+    <span id="lastTs" class="muted">Última actualización: --</span>
+  </div>
+
+  <!-- BOTONES CIRCULARES + CONTADOR -->
+  <div class="row" style="justify-content:flex-start">
+    <div class="pillbar">
+      <div class="circle" id="btnStart" title="Iniciar contador"><img src="{{ url_for('static', filename='img/lettuce.png') }}" alt="Start"></div>
+      <div class="circle" id="btnPause" title="Pausar contador"><img src="{{ url_for('static', filename='img/lettuce.png') }}" alt="Pause"></div>
+      <div class="circle" id="btnReset" title="Reiniciar contador"><img src="{{ url_for('static', filename='img/lettuce.png') }}" alt="Reset"></div>
+    </div>
+    <div>
+      <div class="counter" id="counterText">0 días 00:00:00</div>
+      <div class="counter-label" id="counterHint">Detenido</div>
+    </div>
+  </div>
+
+  <!-- TABLA DE SESIONES DEL CONTADOR -->
+  <div class="card">
+    <h3>Registro del contador (Colombia)</h3>
+    <div class="scroll">
+      <table id="tblCounter">
+        <thead><tr><th>#</th><th>Inicio</th><th>Fin</th><th>Duración (días)</th><th>Acciones</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpis">
+    <div class="kpi" id="kpi_temp_air"><h3>Temp. Ambiente</h3><div class="val" id="k_temp_air">--</div></div>
+    <div class="kpi" id="kpi_hum_air"><h3>Humedad Ambiente</h3><div class="val" id="k_hum_air">--</div></div>
+    <div class="kpi" id="kpi_temp_water"><h3>Temp. Agua</h3><div class="val" id="k_temp_water">--</div></div>
+    <div class="kpi" id="kpi_ph"><h3>pH</h3><div class="val" id="k_ph">--</div></div>
+    <div class="kpi" id="kpi_ec"><h3>EC</h3><div class="val" id="k_ec">--</div></div>
+    <div class="kpi" id="kpi_distance"><h3>Distancia (cm)</h3><div class="val" id="k_distance">--</div></div>
+    <div class="kpi" id="kpi_level1"><h3>Nivel 1</h3><div class="val" id="k_level1">--</div></div>
+    <div class="kpi" id="kpi_level2"><h3>Nivel 2</h3><div class="val" id="k_level2">--</div></div>
+    <div class="kpi" id="kpi_level3"><h3>Nivel 3</h3><div class="val" id="k_level3">--</div></div>
+    <div class="kpi" id="kpi_level4"><h3>Nivel 4</h3><div class="val" id="k_level4">--</div></div>
+  </div>
+
+  <!-- GRÁFICAS + TABLAS -->
+  <div class="col">
+
+    <div class="card">
+      <h3>Temperatura del agua (°C)</h3>
+      <canvas id="ch_temp_water"></canvas>
+      <details><summary>Ver datos (tabla)</summary>
+        <div class="scroll"><table><thead><tr><th>Fecha</th><th>Hora</th><th>Valor</th></tr></thead><tbody id="tbl_temp_water"></tbody></table></div>
+      </details>
+    </div>
+
+    <div class="card">
+      <h3>Temperatura ambiente (°C)</h3>
+      <canvas id="ch_temp_air"></canvas>
+      <details><summary>Ver datos (tabla)</summary>
+        <div class="scroll"><table><thead><tr><th>Fecha</th><th>Hora</th><th>Valor</th></tr></thead><tbody id="tbl_temp_air"></tbody></table></div>
+      </details>
+    </div>
+
+    <div class="card">
+      <h3>Humedad ambiente (%)</h3>
+      <canvas id="ch_hum_air"></canvas>
+      <details><summary>Ver datos (tabla)</summary>
+        <div class="scroll"><table><thead><tr><th>Fecha</th><th>Hora</th><th>Valor</th></tr></thead><tbody id="tbl_hum_air"></tbody></table></div>
+      </details>
+    </div>
+
+    <div class="card">
+      <h3>pH</h3>
+      <canvas id="ch_ph"></canvas>
+      <details><summary>Ver datos (tabla)</summary>
+        <div class="scroll"><table><thead><tr><th>Fecha</th><th>Hora</th><th>Valor</th></tr></thead><tbody id="tbl_ph"></tbody></table></div>
+      </details>
+    </div>
+
+    <div class="card">
+      <h3>Conductividad (µS/cm)</h3>
+      <canvas id="ch_ec"></canvas>
+      <details><summary>Ver datos (tabla)</summary>
+        <div class="scroll"><table><thead><tr><th>Fecha</th><th>Hora</th><th>Valor</th></tr></thead><tbody id="tbl_ec"></tbody></table></div>
+      </details>
+    </div>
+
+    <div class="card">
+      <h3>Distancia (cm)</h3>
+      <canvas id="ch_distance"></canvas>
+      <details><summary>Ver datos (tabla)</summary>
+        <div class="scroll"><table><thead><tr><th>Fecha</th><th>Hora</th><th>Valor</th></tr></thead><tbody id="tbl_distance"></tbody></table></div>
+      </details>
+    </div>
+
+    <!-- NIVELES SEPARADOS -->
+    <div class="card">
+      <h3>Nivel 1 (1=alto, 0=bajo)</h3>
+      <canvas id="ch_level1"></canvas>
+      <details><summary>Ver datos (tabla)</summary>
+        <div class="scroll"><table>
+          <thead><tr><th>Fecha</th><th>Hora</th><th>Valor</th></tr></thead>
+          <tbody id="tbl_level1"></tbody>
+        </table></div>
+      </details>
+    </div>
+
+    <div class="card">
+      <h3>Nivel 2 (1=alto, 0=bajo)</h3>
+      <canvas id="ch_level2"></canvas>
+      <details><summary>Ver datos (tabla)</summary>
+        <div class="scroll"><table>
+          <thead><tr><th>Fecha</th><th>Hora</th><th>Valor</th></tr></thead>
+          <tbody id="tbl_level2"></tbody>
+        </table></div>
+      </details>
+    </div>
+
+    <div class="card">
+      <h3>Nivel 3 (1=alto, 0=bajo)</h3>
+      <canvas id="ch_level3"></canvas>
+      <details><summary>Ver datos (tabla)</summary>
+        <div class="scroll"><table>
+          <thead><tr><th>Fecha</th><th>Hora</th><th>Valor</th></tr></thead>
+          <tbody id="tbl_level3"></tbody>
+        </table></div>
+      </details>
+    </div>
+
+    <div class="card">
+      <h3>Nivel 4 (1=alto, 0=bajo)</h3>
+      <canvas id="ch_level4"></canvas>
+      <details><summary>Ver datos (tabla)</summary>
+        <div class="scroll"><table>
+          <thead><tr><th>Fecha</th><th>Hora</th><th>Valor</th></tr></thead>
+          <tbody id="tbl_level4"></tbody>
+        </table></div>
+      </details>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL: gráfica ampliada + tabla -->
+<div class="modal" id="modal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div class="modal-title" id="modalTitle">Gráfica</div>
+      <div class="modal-actions">
+        <button class="btn" id="btnDownload">Descargar PNG</button>
+        <button class="btn secondary" id="btnClose">Cerrar</button>
+      </div>
+    </div>
+    <canvas id="modalCanvas" class="big-canvas"></canvas>
+    <div class="scroll">
+      <table id="modalTable">
+        <thead><tr><th>Fecha</th><th>Hora</th><th>Valor</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ===== Hora Colombia ===== */
+  const tzCO='America/Bogota';
+  function toLocalCO(iso){ return new Date(iso).toLocaleString('es-CO',{timeZone:tzCO}); }
+  function splitCo(iso){ const s=toLocalCO(iso)||''; const [f,h]=s.split(',').map(x=>x?.trim()||'--'); return {fecha:f||'--',hora:h||'--'}; }
+  function tickClock(){ document.getElementById('clockCO').textContent = new Date().toLocaleString('es-CO',{timeZone:tzCO}); }
+  setInterval(tickClock,1000); tickClock();
+
+  /* ===== Tema (light/dark) ===== */
+  const THEME_KEY='ui_theme';
+  const rootEl=document.documentElement;
+  const btnTheme=document.getElementById('btnTheme');
+  const themeLabel=document.getElementById('themeLabel');
+
+  function applyTheme(t){
+    rootEl.setAttribute('data-theme', t);
+    localStorage.setItem(THEME_KEY, t);
+    if(t==='dark'){ btnTheme.textContent='🌙'; themeLabel.innerHTML='<b>Tema:</b> Oscuro'; }
+    else{ btnTheme.textContent='☀️'; themeLabel.innerHTML='<b>Tema:</b> Claro'; }
+  }
+  // Cargar preferencia guardada, si no hay, usar "light" por defecto
+  (function initTheme(){
+    const saved = localStorage.getItem(THEME_KEY);
+    applyTheme(saved==='dark' ? 'dark' : 'light');
+  })();
+  btnTheme.addEventListener('click', ()=> applyTheme(rootEl.getAttribute('data-theme')==='dark'?'light':'dark'));
+
+  /* ===== Colores y rangos ===== */
+  const COLORS={ temp_water:'#4FC3F7', temp_air:'#81C784', hum_air:'#FFD54F', ph:'#BA68C8', ec:'#FF8A65',
+                 distance:'#90CAF9', level1:'#66BB6A', level2:'#26A69A', level3:'#AB47BC', level4:'#FF7043' };
+  const RED='#ff6b6b';
+  const RANGES={
+    temp_water:{min:15,max:25,unit:'°C', title:'Temperatura del agua'},
+    temp_air:{min:12,max:28,unit:'°C', title:'Temperatura ambiente'},
+    hum_air:{min:40,max:80,unit:'%',  title:'Humedad ambiente'},
+    ph:{min:5.8,max:6.8,unit:'pH',   title:'pH'},
+    ec_uS:{min:800,max:2000,unit:'µS/cm', title:'Conductividad'},
+    distance:{min:null,max:70,unit:'cm', title:'Distancia'},
+    level:{min:1,max:1,unit:'nivel (1=alto,0=bajo)', title:'Nivel'}
+  };
+
+  /* ===== Helpers ===== */
+  function fmt(v,suf=''){ if(v==null||v==='') return '--'; const n=Number(v); return isNaN(n)?'--':(suf?`${n.toFixed(2)} ${suf}`:n.toFixed(2)); }
+  function fmtLevel(s){ if(!s) return '--'; const k=String(s).trim().toLowerCase(); return (k==='alto'||k==='bajo')?k:'--'; }
+  function levelToNum(s){ const k=fmtLevel(s); if(k==='alto') return 1; if(k==='bajo') return 0; return null; }
+
+  /* ===== Filtros ===== */
+  const filterState={mode:'days', days:'all', startISO:null, endISO:null};
+
+  /* ===== Contador (localStorage) ===== */
+  const LS_KEY_RUN='counter_running_since';
+  const LS_KEY_SESS='counter_sessions';
+  const runSince = ()=> localStorage.getItem(LS_KEY_RUN);
+  const setRunSince = v => v ? localStorage.setItem(LS_KEY_RUN,v) : localStorage.removeItem(LS_KEY_RUN);
+  const loadSessions = ()=> { try{return JSON.parse(localStorage.getItem(LS_KEY_SESS)||'[]');}catch{return [];} };
+  const saveSessions = a => localStorage.setItem(LS_KEY_SESS, JSON.stringify(a));
+
+  function renderCounterTable(){
+    const tbody=document.querySelector('#tblCounter tbody'); tbody.innerHTML='';
+    loadSessions().forEach((s,i)=>{
+      const d=((s.durationMs||0)/86400000).toFixed(3);
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${i+1}</td>
+        <td>${toLocalCO(s.startISO)}</td>
+        <td>${s.endISO?toLocalCO(s.endISO):'—'}</td>
+        <td>${d}</td>
+        <td class="actions"><button class="btn" data-del="${i}">Eliminar</button></td>`;
+      tbody.appendChild(tr);
+    });
+    tbody.querySelectorAll('button[data-del]').forEach(b=>{
+      b.onclick=()=>{ const idx=+b.dataset.del; const arr=loadSessions(); if (idx>=0&&idx<arr.length){arr.splice(idx,1); saveSessions(arr); renderCounterTable(); rebuildCounterSelect();} };
+    });
+  }
+
+  function rebuildCounterSelect(){
+    const sel=document.getElementById('counterSel');
+    const arr=loadSessions();
+    sel.innerHTML='';
+    if(!arr.length){ sel.innerHTML='<option value="">—</option>'; sel.disabled=true; return; }
+    sel.disabled=false;
+    arr.forEach((s,i)=>{ const opt=document.createElement('option'); opt.value=String(i); opt.textContent=String(i+1); sel.appendChild(opt); });
+    sel.value=String(arr.length-1);
+  }
+
+  function updateCounterUI(){
+    const text=document.getElementById('counterText'); const hint=document.getElementById('counterHint');
+    const start=runSince();
+    if(!start){ text.textContent='0 días 00:00:00'; hint.textContent='Detenido'; return; }
+    const ms=Date.now()-Date.parse(start);
+    const d=Math.floor(ms/86400000);
+    const h=String(Math.floor((ms%86400000)/3600000)).padStart(2,'0');
+    const m=String(Math.floor((ms%3600000)/60000)).padStart(2,'0');
+    const s=String(Math.floor((ms%60000)/1000)).padStart(2,'0');
+    text.textContent=`${d} días ${h}:${m}:${s}`; hint.textContent=`Inició: ${toLocalCO(start)}`;
+  }
+
+  // wire botones contador
+  document.getElementById('btnStart').onclick=()=>{ if(!runSince()){ setRunSince(new Date().toISOString()); updateCounterUI(); } };
+  document.getElementById('btnPause').onclick=()=>{
+    const start=runSince(); if(!start) return;
+    const end=new Date().toISOString();
+    const arr=loadSessions(); arr.push({startISO:start,endISO:end,durationMs:Date.parse(end)-Date.parse(start)}); saveSessions(arr);
+    setRunSince(null); updateCounterUI(); renderCounterTable(); rebuildCounterSelect();
+  };
+  document.getElementById('btnReset').onclick=()=>{ setRunSince(null); updateCounterUI(); };
+
+  // aplicar rango del contador
+  document.getElementById('btnUseCounter').onclick=()=>{
+    const idx=document.getElementById('counterSel').value;
+    const arr=loadSessions();
+    if(idx===''||!arr.length) return alert('No hay sesiones disponibles.');
+    const s=arr[+idx]; if(!s || !s.endISO) return alert('Selecciona una sesión finalizada.');
+    filterState.mode='counter'; filterState.startISO=s.startISO; filterState.endISO=s.endISO;
+    refresh();
+  };
+
+  // aplicar rango de días
+  document.getElementById('btnApplyDays').onclick=()=>{
+    filterState.mode='days'; filterState.days=document.getElementById('daysSel').value;
+    refresh();
+  };
+
+  setInterval(updateCounterUI,1000); updateCounterUI(); renderCounterTable(); rebuildCounterSelect();
+
+  /* ===== Peticiones ===== */
+  async function fetchLatest(){ const r=await fetch('/api/latest'); return await r.json(); }
+  async function fetchHistory(limit=1000){ const r=await fetch(`/api/history?limit=${limit}`); const js=await r.json(); return js.rows||[]; }
+
+  /* ===== KPIs desde /api/latest ===== */
+  function setKpisFromLatest(last){
+    const stale = !last.ts || (Date.now() - Date.parse(last.ts)) >= 60000; // 1 min
+    const setText = (id, txt) => document.getElementById(id).textContent = stale ? '--' : txt;
+
+    setText('k_temp_air',   fmt(last.temp_air,'°C'));
+    setText('k_hum_air',    fmt(last.hum_air,'%'));
+    setText('k_temp_water', fmt(last.temp_water,'°C'));
+    setText('k_ph',         fmt(last.ph));
+    const lastEc_uS = (last && last.ec!=null) ? Number(last.ec)*1000.0 : null;
+    setText('k_ec',         fmt(lastEc_uS,'µS/cm'));
+    setText('k_distance',   fmt(last.distance_cm,'cm'));
+    setText('k_level1', fmtLevel(last.level1));
+    setText('k_level2', fmtLevel(last.level2));
+    setText('k_level3', fmtLevel(last.level3));
+    setText('k_level4', fmtLevel(last.level4));
+
+    ['kpi_temp_air','kpi_hum_air','kpi_temp_water','kpi_ph','kpi_ec','kpi_distance','kpi_level1','kpi_level2','kpi_level3','kpi_level4']
+      .forEach(id=>document.getElementById(id).classList.remove('bad'));
+    if (stale) return;
+
+    const ta=+last.temp_air, ha=+last.hum_air, tw=+last.temp_water, ph=+last.ph, dist=+last.distance_cm;
+    if (!isNaN(tw) && (tw<RANGES.temp_water.min || tw>RANGES.temp_water.max)) document.getElementById('kpi_temp_water').classList.add('bad');
+    if (!isNaN(ta) && (ta<RANGES.temp_air.min   || ta>RANGES.temp_air.max))   document.getElementById('kpi_temp_air').classList.add('bad');
+    if (!isNaN(ha) && (ha<RANGES.hum_air.min    || ha>RANGES.hum_air.max))    document.getElementById('kpi_hum_air').classList.add('bad');
+    if (!isNaN(ph) && (ph<RANGES.ph.min         || ph>RANGES.ph.max))         document.getElementById('kpi_ph').classList.add('bad');
+    if (!isNaN(lastEc_uS) && (lastEc_uS<RANGES.ec_uS.min || lastEc_uS>RANGES.ec_uS.max)) document.getElementById('kpi_ec').classList.add('bad');
+    if (!isNaN(dist) && RANGES.distance.max!=null && dist>RANGES.distance.max) document.getElementById('kpi_distance').classList.add('bad');
+
+    if (fmtLevel(last.level1)==='bajo') document.getElementById('kpi_level1').classList.add('bad');
+    if (fmtLevel(last.level2)==='bajo') document.getElementById('kpi_level2').classList.add('bad');
+    if (fmtLevel(last.level3)==='bajo') document.getElementById('kpi_level3').classList.add('bad');
+    if (fmtLevel(last.level4)==='bajo') document.getElementById('kpi_level4').classList.add('bad');
+
+    document.getElementById('lastTs').textContent = 'Última actualización: ' + (last.ts?toLocalCO(last.ts):'--');
+  }
+
+  /* ===== Chart helpers ===== */
+  function makeCfgWithAnomalies(labelsISO, data, unit, color, range, anomalyPointRadius=4, stepped=false){
+    const labelsLocal = labelsISO.map(l => toLocalCO(l));
+    const inRange = v => v!=null && !isNaN(v) && ((range.min==null||v>=range.min) && (range.max==null||v<=range.max));
+    return {
+      type:'line',
+      data:{ labels: labelsLocal, datasets:[{
+        data,
+        borderColor: color, backgroundColor: color, borderWidth:2, tension: stepped?0:.2, stepped: stepped,
+        pointRadius:(ctx)=>{ const v=ctx.parsed.y; return (v==null||isNaN(v)||inRange(v))?0:anomalyPointRadius; },
+        pointBackgroundColor:(ctx)=>{ const v=ctx.parsed.y; return (v==null||isNaN(v)||inRange(v))?color:RED; },
+        pointBorderColor:(ctx)=>{ const v=ctx.parsed.y; return (v==null||isNaN(v)||inRange(v))?color:RED; },
+      }]},
+      options:{
+        responsive:true,animation:false,
+        scales:{ x:{grid:{display:false},ticks:{autoSkip:true,maxRotation:0}},
+                y:{title:{display:true,text:unit},min: stepped? -0.1: undefined, max: stepped? 1.1: undefined} },
+        plugins:{ legend:{display:false}, tooltip:{mode:'index',intersect:false} }
+      }
+    };
+  }
+
+  const charts={};
+  function renderInlineTable(tbodyId, labelsISO, series, unit){
+    const tbody=document.getElementById(tbodyId); if(!tbody) return;
+    tbody.innerHTML=''; const frag=document.createDocumentFragment();
+    for(let i=0;i<labelsISO.length;i++){
+      const {fecha,hora}=splitCo(labelsISO[i]||new Date().toISOString());
+      const v=series[i]; const vv=(v==null||isNaN(v))?'--':(unit.startsWith('nivel')?String(v):Number(v).toFixed(2)+(unit?` ${unit}`:''));
+      const tr=document.createElement('tr'); tr.innerHTML=`<td>${fecha}</td><td>${hora}</td><td>${vv}</td>`;
+      frag.appendChild(tr);
+    }
+    tbody.appendChild(frag);
+  }
+  function attachChart(id, labelsISO, series, unit, color, range, tableBodyId, chartTitle, stepped=false){
+    const cfg=makeCfgWithAnomalies(labelsISO, series, unit, color, range, 4, stepped);
+    const cv=document.getElementById(id);
+    if(!charts[id]) charts[id]=new Chart(cv, cfg);
+    else{ charts[id].data.labels=cfg.data.labels; charts[id].data.datasets[0].data=series; charts[id].update(); }
+    cv.onclick = ()=> openModal(chartTitle, labelsISO, series, unit, color, range, stepped);
+    renderInlineTable(tableBodyId, labelsISO, series, unit);
+  }
+
+  /* ===== Modal ===== */
+  const modal=document.getElementById('modal');
+  const modalCanvas=document.getElementById('modalCanvas');
+  const modalTitle=document.getElementById('modalTitle');
+  const modalTableBody=document.querySelector('#modalTable tbody');
+  let modalChart=null;
+  function openModal(title, labelsISO, series, unit, color, range, stepped=false){
+    modalTitle.textContent = title;
+    if(modalChart) modalChart.destroy();
+    modalChart = new Chart(modalCanvas, makeCfgWithAnomalies(labelsISO, series, unit, color, range, 5, stepped));
+    modalTableBody.innerHTML='';
+    labelsISO.forEach((iso,i)=>{
+      const {fecha,hora}=splitCo(iso||new Date().toISOString());
+      const v=series[i]; const vv=(v==null||isNaN(v))?'--':(unit.startsWith('nivel')?String(v):Number(v).toFixed(2)+(unit?` ${unit}`:''));
+      const tr=document.createElement('tr'); tr.innerHTML=`<td>${fecha}</td><td>${hora}</td><td>${vv}</td>`;
+      modalTableBody.appendChild(tr);
+    });
+    modal.classList.add('open');
+  }
+  document.getElementById('btnClose').onclick=()=>modal.classList.remove('open');
+  modal.addEventListener('click',e=>{ if(e.target===modal) modal.classList.remove('open'); });
+  document.getElementById('btnDownload').onclick=()=>{ if(!modalChart)return; const a=document.createElement('a'); a.href=modalCanvas.toDataURL('image/png'); a.download=(modalTitle.textContent||'grafica')+'.png'; a.click(); };
+
+  /* ===== Datos & Refresh ===== */
+  async function refresh(){
+    const [last, hist] = await Promise.all([fetchLatest(), fetchHistory(1000)]);
+    setKpisFromLatest(last);
+
+    let rows = Array.isArray(hist) ? hist.slice() : [];
+    rows.sort((a,b)=> (a.ts||'').localeCompare(b.ts||''));
+
+    if (filterState.mode==='days' && filterState.days!=='all'){
+      const cutoff = Date.now() - Number(filterState.days)*24*60*60*1000;
+      rows = rows.filter(r=>{ const t=Date.parse(r.ts||''); return isFinite(t)? t>=cutoff : true; });
+    }
+    if (filterState.mode==='counter' && filterState.startISO && filterState.endISO){
+      const t0=Date.parse(filterState.startISO), t1=Date.parse(filterState.endISO);
+      rows = rows.filter(r=>{ const t=Date.parse(r.ts||''); return isFinite(t)? (t>=t0 && t<=t1) : true; });
+    }
+
+    if (!rows.length && last && last.ts){ rows=[{...last}]; }
+
+    const labelsISO = rows.map(r=>r.ts||new Date().toISOString());
+    const temp_air   = rows.map(r=> r.temp_air!==''?Number(r.temp_air):null);
+    const hum_air    = rows.map(r=> r.hum_air!==''?Number(r.hum_air):null);
+    const temp_water = rows.map(r=> r.temp_water!==''?Number(r.temp_water):null);
+    const ph         = rows.map(r=> r.ph!==''?Number(r.ph):null);
+    const ec_uS      = rows.map(r=> r.ec!==''?Number(r.ec)*1000.0:null);
+    const distance   = rows.map(r=> r.distance_cm!=='' && r.distance_cm!=null ? Number(r.distance_cm):null);
+
+    const level1 = rows.map(r=> levelToNum(r.level1));
+    const level2 = rows.map(r=> levelToNum(r.level2));
+    const level3 = rows.map(r=> levelToNum(r.level3));
+    const level4 = rows.map(r=> levelToNum(r.level4));
+
+    attachChart('ch_temp_water', labelsISO, temp_water, '°C',    COLORS.temp_water, RANGES.temp_water, 'tbl_temp_water', 'Temperatura del agua (°C)');
+    attachChart('ch_temp_air',   labelsISO, temp_air,   '°C',    COLORS.temp_air,   RANGES.temp_air,   'tbl_temp_air',   'Temperatura ambiente (°C)');
+    attachChart('ch_hum_air',    labelsISO, hum_air,    '%',     COLORS.hum_air,    RANGES.hum_air,    'tbl_hum_air',    'Humedad ambiente (%)');
+    attachChart('ch_ph',         labelsISO, ph,         'pH',    COLORS.ph,         RANGES.ph,         'tbl_ph',         'pH');
+    attachChart('ch_ec',         labelsISO, ec_uS,      'µS/cm', COLORS.ec,         RANGES.ec_uS,      'tbl_ec',         'Conductividad (µS/cm)');
+    attachChart('ch_distance',   labelsISO, distance,   'cm',    COLORS.distance,   RANGES.distance,   'tbl_distance',   'Distancia (cm)');
+
+    attachChart('ch_level1', labelsISO, level1, 'nivel (1=alto,0=bajo)', COLORS.level1, RANGES.level, 'tbl_level1', 'Nivel 1', true);
+    attachChart('ch_level2', labelsISO, level2, 'nivel (1=alto,0=bajo)', COLORS.level2, RANGES.level, 'tbl_level2', 'Nivel 2', true);
+    attachChart('ch_level3', labelsISO, level3, 'nivel (1=alto,0=bajo)', COLORS.level3, RANGES.level, 'tbl_level3', 'Nivel 3', true);
+    attachChart('ch_level4', labelsISO, level4, 'nivel (1=alto,0=bajo)', COLORS.level4, RANGES.level, 'tbl_level4', 'Nivel 4', true);
+
+    document.getElementById('lastTs').textContent = 'Última actualización: ' + (rows.length? toLocalCO(rows[rows.length-1].ts) : '--');
+  }
+
+  document.getElementById('btnUpdate')?.addEventListener('click', ()=>refresh());
+  document.getElementById('daysSel').value='all';
+  refresh();
+  setInterval(refresh, 10000);
+</script>
+</body>
+</html>
