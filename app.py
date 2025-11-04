@@ -20,7 +20,7 @@ INGEST_TOKEN = os.environ.get("INGEST_TOKEN")   # opcional: header "X-INGEST-TOK
 PORT = int(os.environ.get("PORT", "5000"))      # puerto donde corre Flask
 
 # Conexión a MongoDB Atlas (usa directamente tu URI)
-MONGO_URI = "mongodb+srv://IoT_datos:SocorroDelCarmen.20@pmlh.cfngjxa.mongodb.net/?retryWrites=true&w=majority&appName=PMLH"
+MONGO_URI = ""
 mongo_client = MongoClient(MONGO_URI)
 
 # Base de datos y colección según tu Atlas
