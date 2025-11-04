@@ -17,19 +17,6 @@ Desde MongoDB, los datos son posteriormente consultados por la página web, dond
 
 ---
 
-### 🔄 Diagrama de Flujo del Sistema
-
-```mermaid
-flowchart LR
-    A[📡 Módulos Emisores] --> B[📶 Módulo Receptor (Principal)]
-    B -->|TCP:22| C[💻 Máquina Virtual]
-    C --> D[📊 latest]
-    C --> E[🗂 pending_file]
-    E -->|Cada 15 min (promedio)| F[(🗄 MongoDB)]
-    F --> G[🌐 Aplicación Web]
-    D --> G
-
----
 
 ## 👥 Autores
 
