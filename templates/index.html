@@ -59,7 +59,7 @@
   canvas{width:100%;height:300px;cursor:zoom-in}
   details{margin-top:10px}
   summary{cursor:pointer;color:var(--muted)}
-  .scroll{overflow:auto;border:1px solid var(--border);border-radius:12px;max-height:40vh}
+  .scroll{overflow-x:auto;overflow-y: auto; border:1px solid var(--border);border-radius:12px;max-height:40vh}
   table{width:100%;border-collapse:collapse;font-size:13px}
   th,td{padding:6px 8px;border-bottom:1px solid var(--border)}
   th{position:sticky;top:0;background:var(--btn-secondary);z-index:1}
@@ -76,6 +76,10 @@
   /* Tema toggle chip */
   .themechip{display:inline-flex;gap:6px;align-items:center;border-radius:999px;background:var(--btn-secondary);border:1px solid var(--btn-border);padding:6px 10px;font-size:12px}
   .themechip b{font-weight:700}
+  .hero h1 { color: white; }
+  @media (max-width:768px){.row{flex-direction:column;align-items:stretch}.col{gap:12px}.card{padding:12px}.pillbar{justify-content:space-around;flex-wrap:wrap}.kpis{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}canvas{height:250px}.hero h1{font-size:28px}.wrap{padding:0 12px}.circle{width:50px;height:50px}.circle img{width:28px;height:28px}.counter{font-size:20px}}@media (max-width:480px){.hero h1{font-size:22px}.hero .content{padding:16px 8px}
+}
+
 </style>
 </head>
 <body>
@@ -162,6 +166,9 @@
     <div class="kpi" id="kpi_level2"><h3>Nivel 2</h3><div class="val" id="k_level2">--</div></div>
     <div class="kpi" id="kpi_level3"><h3>Nivel 3</h3><div class="val" id="k_level3">--</div></div>
     <div class="kpi" id="kpi_level4"><h3>Nivel 4</h3><div class="val" id="k_level4">--</div></div>
+    <div class="kpi" id="kpi_level5"><h3>Nivel 5</h3><div class="val" id="k_level5">--</div></div>
+    <div class="kpi" id="kpi_level6"><h3>Nivel 6</h3><div class="val" id="k_level6">--</div></div>
+    <div class="kpi" id="kpi_level7"><h3>Nivel 7</h3><div class="val" id="k_level7">--</div></div>
   </div>
 
   <!-- GRÁFICAS + TABLAS -->
@@ -217,49 +224,81 @@
 
     <!-- NIVELES SEPARADOS -->
     <div class="card">
-      <h3>Nivel 1 (1=alto, 0=bajo)</h3>
-      <canvas id="ch_level1"></canvas>
-      <details><summary>Ver datos (tabla)</summary>
-        <div class="scroll"><table>
-          <thead><tr><th>Fecha</th><th>Hora</th><th>Valor</th></tr></thead>
-          <tbody id="tbl_level1"></tbody>
-        </table></div>
-      </details>
+     <h3>Nivel 1</h3>
+     <details>
+      <summary>Histórico</summary>
+      <table>
+       <thead><tr><th>Fecha</th><th>Hora</th><th>Nivel</th></tr></thead>
+       <tbody id="tbl_level1"></tbody>
+      </table>
+     </details>
     </div>
 
     <div class="card">
-      <h3>Nivel 2 (1=alto, 0=bajo)</h3>
-      <canvas id="ch_level2"></canvas>
-      <details><summary>Ver datos (tabla)</summary>
-        <div class="scroll"><table>
-          <thead><tr><th>Fecha</th><th>Hora</th><th>Valor</th></tr></thead>
-          <tbody id="tbl_level2"></tbody>
-        </table></div>
-      </details>
+     <h3>Nivel 2</h3>
+     <details>
+      <summary>Histórico</summary>
+      <table>
+       <thead><tr><th>Fecha</th><th>Hora</th><th>Nivel</th></tr></thead>
+       <tbody id="tbl_level2"></tbody>
+      </table>
+      </details> 
     </div>
 
     <div class="card">
-      <h3>Nivel 3 (1=alto, 0=bajo)</h3>
-      <canvas id="ch_level3"></canvas>
-      <details><summary>Ver datos (tabla)</summary>
-        <div class="scroll"><table>
-          <thead><tr><th>Fecha</th><th>Hora</th><th>Valor</th></tr></thead>
-          <tbody id="tbl_level3"></tbody>
-        </table></div>
-      </details>
+     <h3>Nivel 3</h3>
+     <details>
+      <summary>Histórico</summary>
+      <table>
+       <thead><tr><th>Fecha</th><th>Hora</th><th>Nivel</th></tr></thead>
+       <tbody id="tbl_level3"></tbody>
+      </table>
+     </details>
     </div>
 
     <div class="card">
-      <h3>Nivel 4 (1=alto, 0=bajo)</h3>
-      <canvas id="ch_level4"></canvas>
-      <details><summary>Ver datos (tabla)</summary>
-        <div class="scroll"><table>
-          <thead><tr><th>Fecha</th><th>Hora</th><th>Valor</th></tr></thead>
-          <tbody id="tbl_level4"></tbody>
-        </table></div>
-      </details>
+     <h3>Nivel 4</h3>
+     <details>
+      <summary>Histórico</summary>
+      <table>
+       <thead><tr><th>Fecha</th><th>Hora</th><th>Nivel</th></tr></thead>
+       <tbody id="tbl_level4"></tbody>
+      </table>
+     </details>
     </div>
-
+    
+    <div class="card">
+     <h3>Nivel 5</h3>
+     <details>
+      <summary>Histórico</summary>
+      <table>
+       <thead><tr><th>Fecha</th><th>Hora</th><th>Nivel</th></tr></thead>
+       <tbody id="tbl_level5"></tbody>
+      </table>
+     </details>
+    </div>
+    
+    <div class="card">
+     <h3>Nivel 6</h3>
+     <details>
+      <summary>Histórico</summary>
+      <table>
+       <thead><tr><th>Fecha</th><th>Hora</th><th>Nivel</th></tr></thead>
+       <tbody id="tbl_level6"></tbody>
+      </table>
+     </details>
+    </div>
+    
+    <div class="card">
+     <h3>Nivel 7</h3>
+     <details>
+      <summary>Histórico</summary>
+      <table>
+       <thead><tr><th>Fecha</th><th>Hora</th><th>Nivel</th></tr></thead>
+       <tbody id="tbl_level7"></tbody>
+      </table>
+     </details>
+    </div>
   </div>
 </div>
 
@@ -311,9 +350,11 @@
   btnTheme.addEventListener('click', ()=> applyTheme(rootEl.getAttribute('data-theme')==='dark'?'light':'dark'));
 
   /* ===== Colores y rangos ===== */
+  // Actualizados los colores para los nuevos niveles
   const COLORS={ temp_water:'#4FC3F7', temp_air:'#81C784', hum_air:'#FFD54F', ph:'#BA68C8', ec:'#FF8A65',
-                 distance:'#90CAF9', level1:'#66BB6A', level2:'#26A69A', level3:'#AB47BC', level4:'#FF7043' };
-  const RED='#ff6b6b';
+                 distance:'#90CAF9', level1:'#66BB6A', level2:'#26A69A', level3:'#AB47BC', level4:'#FF7043',
+                 level5:'#29B6F6', level6:'#FFA726', level7:'#8D6E63' };
+                 
   const RANGES={
     temp_water:{min:15,max:25,unit:'°C', title:'Temperatura del agua'},
     temp_air:{min:12,max:28,unit:'°C', title:'Temperatura ambiente'},
@@ -405,161 +446,226 @@
     refresh();
   };
 
-  setInterval(updateCounterUI,1000); updateCounterUI(); renderCounterTable(); rebuildCounterSelect();
+  setInterval(updateCounterUI, 1000); updateCounterUI(); renderCounterTable(); rebuildCounterSelect();
 
-  /* ===== Peticiones ===== */
-  async function fetchLatest(){ const r=await fetch('/api/latest'); return await r.json(); }
-  async function fetchHistory(limit=1000){ const r=await fetch(`/api/history?limit=${limit}`); const js=await r.json(); return js.rows||[]; }
-
-  /* ===== KPIs desde /api/latest ===== */
-  function setKpisFromLatest(last){
-    const stale = !last.ts || (Date.now() - Date.parse(last.ts)) >= 60000; // 1 min
-    const setText = (id, txt) => document.getElementById(id).textContent = stale ? '--' : txt;
-
-    setText('k_temp_air',   fmt(last.temp_air,'°C'));
-    setText('k_hum_air',    fmt(last.hum_air,'%'));
-    setText('k_temp_water', fmt(last.temp_water,'°C'));
-    setText('k_ph',         fmt(last.ph));
-    const lastEc_uS = (last && last.ec!=null) ? Number(last.ec)*1000.0 : null;
-    setText('k_ec',         fmt(lastEc_uS,'µS/cm'));
-    setText('k_distance',   fmt(last.distance_cm,'cm'));
-    setText('k_level1', fmtLevel(last.level1));
-    setText('k_level2', fmtLevel(last.level2));
-    setText('k_level3', fmtLevel(last.level3));
-    setText('k_level4', fmtLevel(last.level4));
-
-    ['kpi_temp_air','kpi_hum_air','kpi_temp_water','kpi_ph','kpi_ec','kpi_distance','kpi_level1','kpi_level2','kpi_level3','kpi_level4']
-      .forEach(id=>document.getElementById(id).classList.remove('bad'));
-    if (stale) return;
-
-    const ta=+last.temp_air, ha=+last.hum_air, tw=+last.temp_water, ph=+last.ph, dist=+last.distance_cm;
-    if (!isNaN(tw) && (tw<RANGES.temp_water.min || tw>RANGES.temp_water.max)) document.getElementById('kpi_temp_water').classList.add('bad');
-    if (!isNaN(ta) && (ta<RANGES.temp_air.min   || ta>RANGES.temp_air.max))   document.getElementById('kpi_temp_air').classList.add('bad');
-    if (!isNaN(ha) && (ha<RANGES.hum_air.min    || ha>RANGES.hum_air.max))    document.getElementById('kpi_hum_air').classList.add('bad');
-    if (!isNaN(ph) && (ph<RANGES.ph.min         || ph>RANGES.ph.max))         document.getElementById('kpi_ph').classList.add('bad');
-    if (!isNaN(lastEc_uS) && (lastEc_uS<RANGES.ec_uS.min || lastEc_uS>RANGES.ec_uS.max)) document.getElementById('kpi_ec').classList.add('bad');
-    if (!isNaN(dist) && RANGES.distance.max!=null && dist>RANGES.distance.max) document.getElementById('kpi_distance').classList.add('bad');
-
-    if (fmtLevel(last.level1)==='bajo') document.getElementById('kpi_level1').classList.add('bad');
-    if (fmtLevel(last.level2)==='bajo') document.getElementById('kpi_level2').classList.add('bad');
-    if (fmtLevel(last.level3)==='bajo') document.getElementById('kpi_level3').classList.add('bad');
-    if (fmtLevel(last.level4)==='bajo') document.getElementById('kpi_level4').classList.add('bad');
-
-    document.getElementById('lastTs').textContent = 'Última actualización: ' + (last.ts?toLocalCO(last.ts):'--');
-  }
-
-  /* ===== Chart helpers ===== */
-  function makeCfgWithAnomalies(labelsISO, data, unit, color, range, anomalyPointRadius=4, stepped=false){
-    const labelsLocal = labelsISO.map(l => toLocalCO(l));
-    const inRange = v => v!=null && !isNaN(v) && ((range.min==null||v>=range.min) && (range.max==null||v<=range.max));
-    return {
-      type:'line',
-      data:{ labels: labelsLocal, datasets:[{
-        data,
-        borderColor: color, backgroundColor: color, borderWidth:2, tension: stepped?0:.2, stepped: stepped,
-        pointRadius:(ctx)=>{ const v=ctx.parsed.y; return (v==null||isNaN(v)||inRange(v))?0:anomalyPointRadius; },
-        pointBackgroundColor:(ctx)=>{ const v=ctx.parsed.y; return (v==null||isNaN(v)||inRange(v))?color:RED; },
-        pointBorderColor:(ctx)=>{ const v=ctx.parsed.y; return (v==null||isNaN(v)||inRange(v))?color:RED; },
-      }]},
-      options:{
-        responsive:true,animation:false,
-        scales:{ x:{grid:{display:false},ticks:{autoSkip:true,maxRotation:0}},
-                y:{title:{display:true,text:unit},min: stepped? -0.1: undefined, max: stepped? 1.1: undefined} },
-        plugins:{ legend:{display:false}, tooltip:{mode:'index',intersect:false} }
+    /* ===== Peticiones ===== */
+    async function fetchLatest() {
+      try {
+        const r = await fetch('/api/latest', { cache: "no-store" });
+        if (!r.ok) return {};
+        const js = await r.json();
+        return js || {};
+      } catch (e) {
+        console.warn('fetchLatest error', e);
+        return {};
       }
-    };
-  }
-
-  const charts={};
-  function renderInlineTable(tbodyId, labelsISO, series, unit){
-    const tbody=document.getElementById(tbodyId); if(!tbody) return;
-    tbody.innerHTML=''; const frag=document.createDocumentFragment();
-    for(let i=0;i<labelsISO.length;i++){
-      const {fecha,hora}=splitCo(labelsISO[i]||new Date().toISOString());
-      const v=series[i]; const vv=(v==null||isNaN(v))?'--':(unit.startsWith('nivel')?String(v):Number(v).toFixed(2)+(unit?` ${unit}`:''));
-      const tr=document.createElement('tr'); tr.innerHTML=`<td>${fecha}</td><td>${hora}</td><td>${vv}</td>`;
-      frag.appendChild(tr);
-    }
-    tbody.appendChild(frag);
-  }
-  function attachChart(id, labelsISO, series, unit, color, range, tableBodyId, chartTitle, stepped=false){
-    const cfg=makeCfgWithAnomalies(labelsISO, series, unit, color, range, 4, stepped);
-    const cv=document.getElementById(id);
-    if(!charts[id]) charts[id]=new Chart(cv, cfg);
-    else{ charts[id].data.labels=cfg.data.labels; charts[id].data.datasets[0].data=series; charts[id].update(); }
-    cv.onclick = ()=> openModal(chartTitle, labelsISO, series, unit, color, range, stepped);
-    renderInlineTable(tableBodyId, labelsISO, series, unit);
-  }
-
-  /* ===== Modal ===== */
-  const modal=document.getElementById('modal');
-  const modalCanvas=document.getElementById('modalCanvas');
-  const modalTitle=document.getElementById('modalTitle');
-  const modalTableBody=document.querySelector('#modalTable tbody');
-  let modalChart=null;
-  function openModal(title, labelsISO, series, unit, color, range, stepped=false){
-    modalTitle.textContent = title;
-    if(modalChart) modalChart.destroy();
-    modalChart = new Chart(modalCanvas, makeCfgWithAnomalies(labelsISO, series, unit, color, range, 5, stepped));
-    modalTableBody.innerHTML='';
-    labelsISO.forEach((iso,i)=>{
-      const {fecha,hora}=splitCo(iso||new Date().toISOString());
-      const v=series[i]; const vv=(v==null||isNaN(v))?'--':(unit.startsWith('nivel')?String(v):Number(v).toFixed(2)+(unit?` ${unit}`:''));
-      const tr=document.createElement('tr'); tr.innerHTML=`<td>${fecha}</td><td>${hora}</td><td>${vv}</td>`;
-      modalTableBody.appendChild(tr);
-    });
-    modal.classList.add('open');
-  }
-  document.getElementById('btnClose').onclick=()=>modal.classList.remove('open');
-  modal.addEventListener('click',e=>{ if(e.target===modal) modal.classList.remove('open'); });
-  document.getElementById('btnDownload').onclick=()=>{ if(!modalChart)return; const a=document.createElement('a'); a.href=modalCanvas.toDataURL('image/png'); a.download=(modalTitle.textContent||'grafica')+'.png'; a.click(); };
-
-  /* ===== Datos & Refresh ===== */
-  async function refresh(){
-    const [last, hist] = await Promise.all([fetchLatest(), fetchHistory(1000)]);
-    setKpisFromLatest(last);
-
-    let rows = Array.isArray(hist) ? hist.slice() : [];
-    rows.sort((a,b)=> (a.ts||'').localeCompare(b.ts||''));
-
-    if (filterState.mode==='days' && filterState.days!=='all'){
-      const cutoff = Date.now() - Number(filterState.days)*24*60*60*1000;
-      rows = rows.filter(r=>{ const t=Date.parse(r.ts||''); return isFinite(t)? t>=cutoff : true; });
-    }
-    if (filterState.mode==='counter' && filterState.startISO && filterState.endISO){
-      const t0=Date.parse(filterState.startISO), t1=Date.parse(filterState.endISO);
-      rows = rows.filter(r=>{ const t=Date.parse(r.ts||''); return isFinite(t)? (t>=t0 && t<=t1) : true; });
     }
 
-    if (!rows.length && last && last.ts){ rows=[{...last}]; }
+    async function fetchHistory(limit = 10000) {
+      try {
+        const r = await fetch(`/api/history?limit=${limit}`, { cache: "no-store" });
+        if (!r.ok) return [];
+        const js = await r.json();
+        return Array.isArray(js.rows) ? js.rows : [];
+      } catch (e) {
+        console.warn('fetchHistory error', e);
+        return [];
+      }
+    }
 
-    const labelsISO = rows.map(r=>r.ts||new Date().toISOString());
-    const temp_air   = rows.map(r=> r.temp_air!==''?Number(r.temp_air):null);
-    const hum_air    = rows.map(r=> r.hum_air!==''?Number(r.hum_air):null);
-    const temp_water = rows.map(r=> r.temp_water!==''?Number(r.temp_water):null);
-    const ph         = rows.map(r=> r.ph!==''?Number(r.ph):null);
-    const ec_uS      = rows.map(r=> r.ec!==''?Number(r.ec)*1000.0:null);
-    const distance   = rows.map(r=> r.distance_cm!=='' && r.distance_cm!=null ? Number(r.distance_cm):null);
 
-    const level1 = rows.map(r=> levelToNum(r.level1));
-    const level2 = rows.map(r=> levelToNum(r.level2));
-    const level3 = rows.map(r=> levelToNum(r.level3));
-    const level4 = rows.map(r=> levelToNum(r.level4));
+    /* ===== KPIs desde /api/latest ===== */
+    function setKpisFromLatest(last) {
+      // Aseguramos que last sea un objeto
+      last = last && typeof last === 'object' ? last : {};
 
-    attachChart('ch_temp_water', labelsISO, temp_water, '°C',    COLORS.temp_water, RANGES.temp_water, 'tbl_temp_water', 'Temperatura del agua (°C)');
-    attachChart('ch_temp_air',   labelsISO, temp_air,   '°C',    COLORS.temp_air,   RANGES.temp_air,   'tbl_temp_air',   'Temperatura ambiente (°C)');
-    attachChart('ch_hum_air',    labelsISO, hum_air,    '%',     COLORS.hum_air,    RANGES.hum_air,    'tbl_hum_air',    'Humedad ambiente (%)');
-    attachChart('ch_ph',         labelsISO, ph,         'pH',    COLORS.ph,         RANGES.ph,         'tbl_ph',         'pH');
-    attachChart('ch_ec',         labelsISO, ec_uS,      'µS/cm', COLORS.ec,         RANGES.ec_uS,      'tbl_ec',         'Conductividad (µS/cm)');
-    attachChart('ch_distance',   labelsISO, distance,   'cm',    COLORS.distance,   RANGES.distance,   'tbl_distance',   'Distancia (cm)');
+      // Considerar los datos como antiguos solo si pasaron más de 15 minutos sin recibir nuevos
+      const stale = !last.ts || (Date.now() - Date.parse(last.ts || '1970-01-01T00:00:00Z')) >= 900000;
+      const setText = (id, txt) => document.getElementById(id).textContent = stale ? '--' : txt;
 
-    attachChart('ch_level1', labelsISO, level1, 'nivel (1=alto,0=bajo)', COLORS.level1, RANGES.level, 'tbl_level1', 'Nivel 1', true);
-    attachChart('ch_level2', labelsISO, level2, 'nivel (1=alto,0=bajo)', COLORS.level2, RANGES.level, 'tbl_level2', 'Nivel 2', true);
-    attachChart('ch_level3', labelsISO, level3, 'nivel (1=alto,0=bajo)', COLORS.level3, RANGES.level, 'tbl_level3', 'Nivel 3', true);
-    attachChart('ch_level4', labelsISO, level4, 'nivel (1=alto,0=bajo)', COLORS.level4, RANGES.level, 'tbl_level4', 'Nivel 4', true);
+      setText('k_temp_air', fmt(last.temp_air, '°C'));
+      setText('k_hum_air', fmt(last.hum_air, '%'));
+      setText('k_temp_water', fmt(last.temp_water, '°C'));
+      setText('k_ph', fmt(last.ph));
+      const lastEc_uS = (last && last.ec != null) ? Number(last.ec) * 1000.0 : null;
+      setText('k_ec', fmt(lastEc_uS, 'µS/cm'));
+      setText('k_distance', fmt(last.distance_cm, 'cm'));
+      
+      // Seteando todos los 7 niveles
+      setText('k_level1', fmtLevel(last.level1));
+      setText('k_level2', fmtLevel(last.level2));
+      setText('k_level3', fmtLevel(last.level3));
+      setText('k_level4', fmtLevel(last.level4));
+      setText('k_level5', fmtLevel(last.level5));
+      setText('k_level6', fmtLevel(last.level6));
+      setText('k_level7', fmtLevel(last.level7));
 
-    document.getElementById('lastTs').textContent = 'Última actualización: ' + (rows.length? toLocalCO(rows[rows.length-1].ts) : '--');
-  }
+      ['kpi_temp_air', 'kpi_hum_air', 'kpi_temp_water', 'kpi_ph', 'kpi_ec', 'kpi_distance', 
+       'kpi_level1', 'kpi_level2', 'kpi_level3', 'kpi_level4', 'kpi_level5', 'kpi_level6', 'kpi_level7']
+        .forEach(id => document.getElementById(id).classList.remove('bad'));
+        
+      if (stale) {
+        document.getElementById('lastTs').textContent = 'Última actualización: --';
+        return;
+      }
+
+      const ta = Number(last.temp_air), ha = Number(last.hum_air), tw = Number(last.temp_water),
+        phv = Number(last.ph), dist = Number(last.distance_cm);
+
+      if (!isNaN(tw) && (tw < RANGES.temp_water.min || tw > RANGES.temp_water.max)) document.getElementById('kpi_temp_water').classList.add('bad');
+      if (!isNaN(ta) && (ta < RANGES.temp_air.min || ta > RANGES.temp_air.max)) document.getElementById('kpi_temp_air').classList.add('bad');
+      if (!isNaN(ha) && (ha < RANGES.hum_air.min || ha > RANGES.hum_air.max)) document.getElementById('kpi_hum_air').classList.add('bad');
+      if (!isNaN(phv) && (phv < RANGES.ph.min || phv > RANGES.ph.max)) document.getElementById('kpi_ph').classList.add('bad');
+      if (!isNaN(lastEc_uS) && (lastEc_uS < RANGES.ec_uS.min || lastEc_uS > RANGES.ec_uS.max)) document.getElementById('kpi_ec').classList.add('bad');
+      if (!isNaN(dist) && RANGES.distance.max != null && dist > RANGES.distance.max) document.getElementById('kpi_distance').classList.add('bad');
+
+      if (fmtLevel(last.level1) === 'bajo') document.getElementById('kpi_level1').classList.add('bad');
+      if (fmtLevel(last.level2) === 'bajo') document.getElementById('kpi_level2').classList.add('bad');
+      if (fmtLevel(last.level3) === 'bajo') document.getElementById('kpi_level3').classList.add('bad');
+      if (fmtLevel(last.level4) === 'bajo') document.getElementById('kpi_level4').classList.add('bad');
+      if (fmtLevel(last.level5) === 'bajo') document.getElementById('kpi_level5').classList.add('bad');
+      if (fmtLevel(last.level6) === 'bajo') document.getElementById('kpi_level6').classList.add('bad');
+      if (fmtLevel(last.level7) === 'bajo') document.getElementById('kpi_level7').classList.add('bad');
+
+      document.getElementById('lastTs').textContent = 'Última actualización: ' + (last.ts ? toLocalCO(last.ts) : '--');
+    }
+
+
+    /* ===== Chart helpers ===== */
+    // Lógica modificada para evitar el cambio de color (puntos rojos) cuando se exceden los límites
+    function makeCfgWithAnomalies(labelsISO, data, unit, color, range, stepped = false) {
+      const labelsLocal = labelsISO.map(l => toLocalCO(l));
+      return {
+        type: 'line',
+        data: {
+          labels: labelsLocal, datasets: [{
+            data,
+            borderColor: color, 
+            backgroundColor: color, 
+            borderWidth: 2, 
+            tension: stepped ? 0 : .2, 
+            stepped: stepped,
+            pointRadius: 0, // Mantiene los puntos invisibles a simple vista
+            pointHoverRadius: 4, // Al pasar el mouse, el punto se muestra normalmente
+            pointBackgroundColor: color,
+            pointBorderColor: color,
+          }]
+        },
+        options: {
+          responsive: true, animation: false,
+          scales: {
+            x: { grid: { display: false }, ticks: { autoSkip: true, maxRotation: 0 } },
+            y: { title: { display: true, text: unit }, min: stepped ? -0.1 : undefined, max: stepped ? 1.1 : undefined }
+          },
+          plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } }
+        }
+      };
+    }
+
+    const charts = {};
+    function renderInlineTable(tbodyId, labelsISO, series, unit) {
+      const tbody = document.getElementById(tbodyId); if (!tbody) return;
+      tbody.innerHTML = ''; const frag = document.createDocumentFragment();
+      for (let i = 0; i < labelsISO.length; i++) {
+        const { fecha, hora } = splitCo(labelsISO[i] || new Date().toISOString());
+        const v = series[i];
+        const vv = (v == null || isNaN(v))
+          ? '--'
+          : (unit.startsWith('nivel')
+            ? (v == 1 || v == "1" ? 'alto' : (v == 0 || v == "0" ? 'bajo' : '--'))
+            : Number(v).toFixed(2) + (unit ? ` ${unit}` : '')
+          );
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${fecha}</td><td>${hora}</td><td>${vv}</td>`;
+        frag.appendChild(tr);
+      }
+      tbody.appendChild(frag);
+    }
+
+    function attachChart(id, labelsISO, series, unit, color, range, tableBodyId, chartTitle, stepped = false) {
+      const cfg = makeCfgWithAnomalies(labelsISO, series, unit, color, range, stepped);
+      const cv = document.getElementById(id);
+      if (!charts[id]) charts[id] = new Chart(cv, cfg);
+      else { charts[id].data.labels = cfg.data.labels; charts[id].data.datasets[0].data = series; charts[id].update(); }
+      cv.onclick = () => openModal(chartTitle, labelsISO, series, unit, color, range, stepped);
+      renderInlineTable(tableBodyId, labelsISO, series, unit);
+    }
+
+    /* ===== Modal ===== */
+    const modal = document.getElementById('modal');
+    const modalCanvas = document.getElementById('modalCanvas');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalTableBody = document.querySelector('#modalTable tbody');
+    let modalChart = null;
+    function openModal(title, labelsISO, series, unit, color, range, stepped = false) {
+      modalTitle.textContent = title;
+      if (modalChart) modalChart.destroy();
+      modalChart = new Chart(modalCanvas, makeCfgWithAnomalies(labelsISO, series, unit, color, range, stepped));
+      modalTableBody.innerHTML = '';
+      labelsISO.forEach((iso, i) => {
+        const { fecha, hora } = splitCo(iso || new Date().toISOString());
+        const v = series[i]; const vv = (v == null || isNaN(v)) ? '--' : (unit.startsWith('nivel') ? String(v) : Number(v).toFixed(2) + (unit ? ` ${unit}` : ''));
+        const tr = document.createElement('tr'); tr.innerHTML = `<td>${fecha}</td><td>${hora}</td><td>${vv}</td>`;
+        modalTableBody.appendChild(tr);
+      });
+      modal.classList.add('open');
+    }
+    document.getElementById('btnClose').onclick = () => modal.classList.remove('open');
+    modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+    document.getElementById('btnDownload').onclick = () => { if (!modalChart) return; const a = document.createElement('a'); a.href = modalCanvas.toDataURL('image/png'); a.download = (modalTitle.textContent || 'grafica') + '.png'; a.click(); };
+
+    /* ===== Datos & Refresh ===== */
+    async function refresh() {
+      const [last, hist] = await Promise.all([fetchLatest(), fetchHistory(10000)]);
+      setKpisFromLatest(last);
+
+      let rows = Array.isArray(hist) ? hist.slice() : [];
+      rows.sort((a, b) => (a.ts || '').localeCompare(b.ts || ''));
+
+      if (filterState.mode === 'days' && filterState.days !== 'all') {
+        const cutoff = Date.now() - Number(filterState.days) * 24 * 60 * 60 * 1000;
+        rows = rows.filter(r => { const t = Date.parse(r.ts || ''); return isFinite(t) ? t >= cutoff : true; });
+      }
+      if (filterState.mode === 'counter' && filterState.startISO && filterState.endISO) {
+        const t0 = Date.parse(filterState.startISO), t1 = Date.parse(filterState.endISO);
+        rows = rows.filter(r => { const t = Date.parse(r.ts || ''); return isFinite(t) ? (t >= t0 && t <= t1) : true; });
+      }
+
+      const labelsISO = rows.map(r => r.ts || new Date().toISOString());
+      const temp_air = rows.map(r => (r.temp_air != null ? Number(r.temp_air) : null));
+      const hum_air = rows.map(r => (r.hum_air != null ? Number(r.hum_air) : null));
+      const temp_water = rows.map(r => (r.temp_water != null ? Number(r.temp_water) : null));
+      const ph = rows.map(r => (r.ph != null ? Number(r.ph) : null));
+      const ec_uS = rows.map(r => (r.ec != null ? Number(r.ec) * 1000.0 : null));
+      const distance = rows.map(r => (r.distance_cm != null ? Number(r.distance_cm) : null));
+
+      // Mapeo de los 7 niveles
+      const level1 = rows.map(r => levelToNum(r.level1));
+      const level2 = rows.map(r => levelToNum(r.level2));
+      const level3 = rows.map(r => levelToNum(r.level3));
+      const level4 = rows.map(r => levelToNum(r.level4));
+      const level5 = rows.map(r => levelToNum(r.level5));
+      const level6 = rows.map(r => levelToNum(r.level6));
+      const level7 = rows.map(r => levelToNum(r.level7));
+
+      attachChart('ch_temp_water', labelsISO, temp_water, '°C', COLORS.temp_water, RANGES.temp_water, 'tbl_temp_water', 'Temperatura del agua (°C)');
+      attachChart('ch_temp_air', labelsISO, temp_air, '°C', COLORS.temp_air, RANGES.temp_air, 'tbl_temp_air', 'Temperatura ambiente (°C)');
+      attachChart('ch_hum_air', labelsISO, hum_air, '%', COLORS.hum_air, RANGES.hum_air, 'tbl_hum_air', 'Humedad ambiente (%)');
+      attachChart('ch_ph', labelsISO, ph, 'pH', COLORS.ph, RANGES.ph, 'tbl_ph', 'pH');
+      attachChart('ch_ec', labelsISO, ec_uS, 'µS/cm', COLORS.ec, RANGES.ec_uS, 'tbl_ec', 'Conductividad (µS/cm)');
+      attachChart('ch_distance', labelsISO, distance, 'cm', COLORS.distance, RANGES.distance, 'tbl_distance', 'Distancia (cm)');
+
+      // Renderizado de las 7 tablas de niveles
+      renderInlineTable('tbl_level1', labelsISO, level1, 'nivel (1=alto,0=bajo)');
+      renderInlineTable('tbl_level2', labelsISO, level2, 'nivel (1=alto,0=bajo)');
+      renderInlineTable('tbl_level3', labelsISO, level3, 'nivel (1=alto,0=bajo)');
+      renderInlineTable('tbl_level4', labelsISO, level4, 'nivel (1=alto,0=bajo)');
+      renderInlineTable('tbl_level5', labelsISO, level5, 'nivel (1=alto,0=bajo)');
+      renderInlineTable('tbl_level6', labelsISO, level6, 'nivel (1=alto,0=bajo)');
+      renderInlineTable('tbl_level7', labelsISO, level7, 'nivel (1=alto,0=bajo)');
+
+      document.getElementById('lastTs').textContent = 'Última actualización: ' + (rows.length ? toLocalCO(rows[rows.length - 1].ts) : '--');
+    }
 
   document.getElementById('btnUpdate')?.addEventListener('click', ()=>refresh());
   document.getElementById('daysSel').value='all';
